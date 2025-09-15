@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteSport Gear Store - 3D Interactive Showcase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e);
+            color: #e5e7eb;
+            overflow-x: hidden;
+        }
+        .scene {
+            perspective: 1000px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+        .cube {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            transform-style: preserve-3d;
+            animation: rotateCube 10s infinite linear;
+        }
+        .face {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 2px solid #60a5fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(96, 165, 250, 0.1);
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+        }
+        .face.front { transform: translateZ(150px); }
+        .face.back { transform: rotateY(180deg) translateZ(150px); }
+        .face.right { transform: rotateY(90deg) translateZ(150px); }
+        .face.left { transform: rotateY(-90deg) translateZ(150px); }
+        .face.top { transform: rotateX(90deg) translateZ(150px); }
+        .face.bottom { transform: rotateX(-90deg) translateZ(150px); }
+        @keyframes rotateCube {
+            from { transform: rotateX(0deg) rotateY(0deg); }
+            to { transform: rotateX(360deg) rotateY(360deg); }
+        }
+        .gear-item {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            animation: float 3s ease-in-out infinite;
+            opacity: 0.8;
+        }
+        .gear-item:nth-child(1) { top: 10%; left: 20%; }
+        .gear-item:nth-child(2) { top: 30%; right: 10%; }
+        .gear-item:nth-child(3) { bottom: 20%; left: 15%; }
+        .gear-item:nth-child(4) { bottom: 40%; right: 25%; }
+        .gear-item:nth-child(5) { center; }
+        @keyframes float {
+            0%, 100% { transform: translatey(0px); }
+            50% { transform: translatey(-20px); }
+        }
+        .product-card {
+            background: linear-gradient(145deg, #1f2937, #374151);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .product-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(96,165,250,0.6);
+        }
+        .scrolling-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+        .scrolling-background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: radial-gradient(circle, #1a1a2e 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: scrollBg 20s linear infinite;
+        }
+        @keyframes scrollBg {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50px); }
+        }
+        .interactive-button {
+            background: linear-gradient(45deg, #06b6d4, #3b82f6);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(6,182,212,0.4);
+        }
+        .interactive-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(6,182,212,0.6);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #1f2937;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            text-align: center;
+            animation: modalPop 0.3s ease-out;
+        }
+        @keyframes modalPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scrolling-background"></div>
+    <header class="text-center py-10">
+        <h1 class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">EliteSport Gear Store</h1>
+        <p class="text-xl mt-4">Immerse yourself in our 3D showcase of premium athletic equipment</p>
+        <button class="interactive-button mt-6" onclick="openModal()">Explore in 3D Mode</button>
+    </header>
+
+    <div class="scene" id="scene">
+        <div class="cube">
+            <div class="face front">
+                <div class="gear-item">Basketball</div>
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/346e79f4-9ca8-418d-8413-12cd123dca2f.png" alt="Detailed view of a premium composite basketball with orange leather texture, worn by athletes in intense gameplay, including sweat reflections and dynamic motion blur depicting fast-paced action on a polished hardwood court" />
+            </div>
+            <div class="face back">
+                <div class="gear-item">Soccer Ball</div>
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6afea04c-daa7-48b4-97a9-6157ac00e1a0.png" alt="High-resolution image of a professional soccer ball with black and white pentagonal panels, textured surface for grip, suspended in mid-air during a powerful kick in a stadium setting with cheering crowds visible in the background" />
+            </div>
+            <div class="face right">
+                <div class="gear-item">Tennis Racket</div>
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d16f527a-bdf0-4ead-8d80-6b06c5d5579e.png" alt="Ultra-detailed tennis racket made from carbon fiber with graphite strings, ergonomic handle, held by a player in tennis whites mid-swing with blurred background of clay court and net" />
+            </div>
+            <div class="face left">
+                <div class="gear-item">Running Shoes</div>
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/432b64c1-2f50-43bb-905e-a9ed9f300778.png" alt="Vibrant athletic running shoes with responsive cushioning soles, breathable mesh upper, neon accents, displayed against an urban running path at sunset with motion lines indicating speed" />
+            </div>
+            <div class="face top">
+                <div class="gear-item">Yoga Mat</div>
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/03fc07d0-8aa5-4771-9edb-ba1ff073abbf.png" alt="Thick eco-friendly yoga mat with anti-slip surface, rolled up partially, placed on bamboo flooring in a serene indoor studio with soft lighting and meditation cushions nearby" />
+            </div>
+            <div class="face bottom">
+                <div class="gear-item">Swimming Goggles</div>
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ade67e70-e38b-4450-9a7e-5ddf1d3bae95.png" alt="Professional swimming goggles with tinted anti-fog lenses, adjustable silicone strap, submerged in clear water showing underwater bubbles and pool deck reflections" />
+            </div>
+        </div>
+    </div>
+
+    <section class="py-20 px-10">
+        <h2 class="text-4xl font-bold text-center mb-10 text-cyan-300">Featured Products</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="product-card" onclick="showProduct('Basketball')">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/14f54ed9-511c-4e7b-b62f-df930dad6745.png" alt="Close-up of a durable basketball with textured grip panels, inflated and ready for play, showcasing high-quality synthetic cover against a backdrop of an outdoor basketball court with leaf fall and natural lighting" />
+                <h3 class="text-xl font-semibold mt-4">Pro Basketball</h3>
+                <p class="text-gray-300 mt-2">High-performance composite ball for indoor/outdoor use.</p>
+                <span class="text-cyan-400 font-bold mt-4 block">$49.99</span>
+            </div>
+            <div class="product-card" onclick="showProduct('Tennis Racket')">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/53c65533-e351-4544-850a-1df18dcc3e76.png" alt="Stylized image of a sleek tennis racket with advanced string tension, held vertically with a tennis ball perched on strings, illuminated by studio lights revealing carbon fiber weave and ergonomic design" />
+                <h3 class="text-xl font-semibold mt-4">Carbon Fiber Tennis Racket</h3>
+                <p class="text-gray-300 mt-2">Lightweight design with superior control and power.</p>
+                <span class="text-cyan-400 font-bold mt-4 block">$129.99</span>
+            </div>
+            <div class="product-card" onclick="showProduct('Running Shoes')">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/8b0f3b67-f690-407d-a6d0-7b9f3fb187ca.png" alt="Fashionable running shoes in various colors, featuring arch support and shock absorption, displayed on a treadmill in a gym setting with motivational posters and equipment in soft focus" />
+                <h3 class="text-xl font-semibold mt-4">Athletic Running Shoes</h3>
+                <p class="text-gray-300 mt-2">Comfortable and durable for all terrain running.</p>
+                <span class="text-cyan-400 font-bold mt-4 block">$89.99</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal" id="modal3d">
+        <div class="modal-content">
+            <h3 class="text-2xl font-bold mb-4">3D Exploration Mode</h3>
+            <p class="mb-4">Dive deeper into our gear selection! Rotate the cube to explore different categories.</p>
+            <p class="text-sm text-gray-400 mb-4">Drag to rotate, scroll to zoom in our interactive 3D environment.</p>
+            <button class="interactive-button" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <footer class="text-center py-10 border-t border-cyan-700">
+        <p class="text-gray-400">© 2023 EliteSport Gear Store. All rights reserved. | <a href="#" class="text-cyan-400 hover:text-cyan-300">Privacy Policy</a></p>
+    </footer>
+
+    <script>
+        function openModal() {
+            document.getElementById('modal3d').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal3d').style.display = 'none';
+        }
+
+        function showProduct(productName) {
+            alert(`Viewing details for ${productName}. (Full e-commerce functionality can be added here!)`);
+        }
+
+        // Add interactivity to the 3D scene
+        const scene = document.getElementById('scene');
+        let isDragging = false;
+        let previousMouseX = 0;
+        let previousMouseY = 0;
+        let rotationX = 0;
+        let rotationY = 0;
+
+        scene.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            previousMouseX = e.clientX;
+            previousMouseY = e.clientY;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const deltaX = e.clientX - previousMouseX;
+                const deltaY = e.clientY - previousMouseY;
+
+                rotationY += deltaX * 0.5;
+                rotationX += deltaY * 0.5;
+
+                scene.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+                previousMouseX = e.clientX;
+                previousMouseY = e.clientY;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Wheel zoom
+        scene.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const scale = e.deltaY > 0 ? 0.9 : 1.1;
+            scene.style.transform += ` scale(${scale})`;
+        });
+    </script>
+</body>
+</html>
+</content>
+</create_file>

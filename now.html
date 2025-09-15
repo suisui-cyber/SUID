@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SUID Gear Store - Online Shop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e);
+      color: #e5e7eb;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    /* Hero Section from prototype */
+    .hero-section {
+      height: 100vh;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 20px;
+      position: relative;
+    }
+    .navbar {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #38bdf8;
+      user-select: none;
+    }
+    .hero-content h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      font-weight: 800;
+    }
+    .hero-content p {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      color: #94a3b8;
+      max-width: 600px;
+    }
+    .cta-button {
+      background-color: #38bdf8;
+      color: #0f172a;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .cta-button:hover {
+      background-color: #0ea5e9;
+    }
+
+    /* 3D Cube Section */
+    .scene {
+      perspective: 1000px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60vh;
+      margin: 0 auto;
+      margin-top: 40px;
+    }
+    .cube {
+      position: relative;
+      width: 250px;
+      height: 250px;
+      transform-style: preserve-3d;
+      animation: rotateCube 10s infinite linear;
+    }
+    .face {
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      border: 2px solid #60a5fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(96, 165, 250, 0.1);
+      box-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+    }
+    .face.front { transform: translateZ(125px); }
+    .face.back { transform: rotateY(180deg) translateZ(125px); }
+    .face.right { transform: rotateY(90deg) translateZ(125px); }
+    .face.left { transform: rotateY(-90deg) translateZ(125px); }
+    .face.top { transform: rotateX(90deg) translateZ(125px); }
+    .face.bottom { transform: rotateX(-90deg) translateZ(125px); }
+    @keyframes rotateCube {
+      from { transform: rotateX(0deg) rotateY(0deg); }
+      to { transform: rotateX(360deg) rotateY(360deg); }
+    }
+    .gear-item {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(45deg, #ff6b6b, #ffa500);
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      animation: float 3s ease-in-out infinite;
+      opacity: 0.8;
+    }
+    .gear-item:nth-child(1) { top: 10%; left: 20%; }
+    .gear-item:nth-child(2) { top: 30%; right: 10%; }
+    .gear-item:nth-child(3) { bottom: 20%; left: 15%; }
+    .gear-item:nth-child(4) { bottom: 40%; right: 25%; }
+    .gear-item:nth-child(5) { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+    @keyframes float {
+      0%, 100% { transform: translatey(0px); }
+      50% { transform: translatey(-20px); }
+    }
+
+    /* Product Cards */
+    .product-card {
+      background: linear-gradient(145deg, #1f2937, #374151);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+    .product-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 40px rgba(96,165,250,0.6);
+    }
+    .scrolling-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.4;
+    }
+    .scrolling-background::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 100%;
+      background: radial-gradient(circle, #1a1a2e 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: scrollBg 20s linear infinite;
+    }
+    @keyframes scrollBg {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50px); }
+    }
+    .interactive-button {
+      background: linear-gradient(45deg, #06b6d4, #3b82f6);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(6,182,212,0.4);
+    }
+    .interactive-button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(6,182,212,0.6);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #1f2937;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 400px;
+      text-align: center;
+      animation: modalPop 0.3s ease-out;
+    }
+    @keyframes modalPop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .section {
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .about-us, .contact {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(31, 41, 55, 0.8);
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      margin-bottom: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+  <div class="scrolling-background"></div>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <nav class="navbar">SUID</nav>
+    <div class="hero-content">
+      <h1>Gear Up for Your Next Adventure</h1>
+      <p>Discover premium sports equipment tailored for champions.</p>
+      <button class="cta-button" onclick="scrollToProducts()">Shop Now</button>
+    </div>
+  </section>
+
+  <!-- 3D Cube Section -->
+  <div class="scene" id="scene">
+    <div class="cube">
+      <div class="face front">
+        <div class="gear-item">Basketball</div>
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/15741792-aa25-4de0-960b-abfe07da22c6.png" alt="Basketball" />
+      </div>
+      <div class="face back">
+        <div class="gear-item">Soccer Ball</div>
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b022e3e5-2eca-4d1b-8ac2-bb7cf790db5a.png" alt="Soccer Ball" />
+      </div>
+      <div class="face right">
+        <div class="gear-item">Tennis Racket</div>
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/fe187e76-98fe-4d29-b204-5abd1e4c617f.png" alt="Tennis Racket" />
+      </div>
+      <div class="face left">
+        <div class="gear-item">Running Shoes</div>
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/793af183-f4b1-4539-8aae-da777b6d3e9d.png" alt="Running Shoes" />
+      </div>
+      <div class="face top">
+        <div class="gear-item">Yoga Mat</div>
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d2680d49-826f-4bf9-93f0-e3436ff26363.png" alt="Yoga Mat" />
+      </div>
+      <div class="face bottom">
+        <div class="gear-item">Swimming Goggles</div>
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5d9f2184-f77a-435a-aa6f-67c49e48b8b3.png" alt="Swimming Goggles" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured Products -->
+  <section class="py-20 px-10" id="products">
+    <h2 class="text-4xl font-bold text-center mb-10 text-cyan-300">Featured Products</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="product-card" onclick="showProduct('Basketball')">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1142ba86-f5f9-4eb9-b242-ec0349e3e550.png" alt="Pro Basketball" />
+        <h3 class="text-xl font-semibold mt-4">Pro Basketball</h3>
+        <p class="text-gray-300 mt-2">High-performance composite ball for indoor/outdoor use.</p>
+        <span class="text-cyan-400 font-bold mt-4 block">$49.99</span>
+      </div>
+      <div class="product-card" onclick="showProduct('Tennis Racket')">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ac2975da-ddda-47a4-ab63-7704c6315f69.png" alt="Carbon Fiber Tennis Racket" />
+        <h3 class="text-xl font-semibold mt-4">Carbon Fiber Tennis Racket</h3>
+        <p class="text-gray-300 mt-2">Lightweight design with superior control and power.</p>
+        <span class="text-cyan-400 font-bold mt-4 block">$129.99</span>
+      </div>
+      <div class="product-card" onclick="showProduct('Running Shoes')">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f05c6868-bbac-45c5-bfd8-f73292b854dd.png" alt="Athletic Running Shoes" />
+        <h3 class="text-xl font-semibold mt-4">Athletic Running Shoes</h3>
+        <p class="text-gray-300 mt-2">Comfortable and durable for all terrain running.</p>
+        <span class="text-cyan-400 font-bold mt-4 block">$89.99</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Us -->
+  <section class="section">
+    <div class="about-us">
+      <h2 class="text-4xl font-bold text-cyan-300 mb-6">About Us</h2>
+      <p class="text-lg text-gray-300">At SUID Gear Store, we are passionate about providing top-quality athletic gear for every sport enthusiast. From professional athletes to weekend warriors, our curated selection of equipment ensures you perform at your best. Founded in [Year], we pride ourselves on innovation, sustainability, and exceptional customer service.</p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="section">
+    <div class="contact">
+      <h2 class="text-4xl font-bold text-cyan-300 mb-6">Contact</h2>
+      <p class="text-lg text-gray-300 mb-4">Have questions or need assistance? Reach out to us:</p>
+      <p class="text-gray-300"><strong>Email:</strong> contact@suidgearstore.com</p>
+      <p class="text-gray-300"><strong>Phone:</strong> +1 (555) 123-4567</p>
+      <p class="text-gray-300"><strong>Address:</strong> 123 Sport Ave, Athletic City, ST 12345</p>
+
+      <!-- Contact form -->
+      <form id="contactForm" method="POST" action="/contact" class="mt-6 max-w-md mx-auto text-left">
+        <label class="block mb-2" for="name">Name:</label>
+        <input class="w-full p-2 rounded text-black" type="text" id="name" name="name" required />
+
+        <label class="block mt-4 mb-2" for="email">Email:</label>
+        <input class="w-full p-2 rounded text-black" type="email" id="email" name="email" required />
+
+        <label class="block mt-4 mb-2" for="message">Message:</label>
+        <textarea class="w-full p-2 rounded text-black" id="message" name="message" rows="4" required></textarea>
+
+        <button type="submit" class="interactive-button mt-4">Send Message</button>
+      </form>
+      <div id="formResponse" class="mt-4 text-center"></div>
+    </div>
+  </section>
+
+  <div class="modal" id="modal3d">
+    <div class="modal-content">
+      <h3 class="text-2xl font-bold mb-4">3D Exploration Mode</h3>
+      <p class="mb-4">Dive deeper into our gear selection! Rotate the cube to explore different categories.</p>
+      <p class="text-sm text-gray-400 mb-4">Drag to rotate, scroll to zoom
